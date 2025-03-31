@@ -4,14 +4,15 @@
 {% block title %}Sign Up - AI Interview Prep{% endblock %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 p-10 bg-white dark:bg-slate-800 rounded-xl shadow-lg z-10">
+{# Use the main body background from base.html, center the form container #}
+<div class="min-h-[calc(100vh-theme(spacing.16))] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"> {# Adjust min-height if needed #}
+    <div class="max-w-md w-full space-y-8 p-10 bg-white dark:bg-[#252526] rounded-xl shadow-lg z-10"> {# VS Code panel background #}
         <div class="text-center">
-            <h2 class="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
+            <h2 class="mt-6 text-3xl font-extrabold text-gray-900 dark:text-gray-100">
                 Create your account
             </h2>
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Or <a href="{% url 'users:login' %}" class="font-medium text-blue-600 hover:text-blue-500">
+                Or <a href="{% url 'users:login' %}" class="font-medium text-blue-600 dark:text-[#569cd6] hover:text-blue-500 dark:hover:text-[#7bb2d9]">
                     sign in to your existing account
                 </a>
             </p>
@@ -47,21 +48,23 @@
                 {% for field in form %}
                 <div>
                     <label for="{{ field.id_for_label }}" class="sr-only">{{ field.label }}</label>
+                    {# VS Code style input fields #}
                     <input id="{{ field.id_for_label }}" name="{{ field.name }}" type="{{ field.field.widget.input_type }}" autocomplete="{{ field.name }}" required
-                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-slate-700 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm {% if forloop.first %}rounded-t-md{% elif forloop.last %}rounded-b-md{% endif %} {% if field.errors %}border-red-500{% endif %}"
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-500 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-[#3c3c3c] focus:outline-none focus:ring-[#0e639c] focus:border-[#0e639c] focus:z-10 sm:text-sm {% if forloop.first %}rounded-t-md{% elif forloop.last %}rounded-b-md{% else %}border-b-0{% endif %} {% if field.errors %}border-red-500 dark:border-red-400{% endif %}"
                            placeholder="{{ field.label }}">
                     {% if field.errors %}
                         <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ field.errors|striptags }}</p>
                     {% endif %}
                      {% if not forloop.last %}
-                        <div class="h-px bg-gray-200 dark:bg-gray-700"></div> {# Separator line between fields #}
+                        <div class="h-px bg-gray-300 dark:bg-gray-600"></div> {# Darker Separator line #}
                      {% endif %}
                 </div>
                 {% endfor %}
             </div>
 
             <div>
-                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                 {# VS Code style button #}
+                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#0e639c] hover:bg-[#1177bb] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0e639c] dark:focus:ring-offset-gray-800">
                     Sign up
                 </button>
             </div>

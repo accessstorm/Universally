@@ -1,0 +1,7 @@
+Django~=4.2 # Assuming Django 4.2 based on typical modern usage, adjust if needed
+pandas
+numpy
+scikit-learn
+# Add other existing dependencies if known (e.g., Pillow for images, requests if used)
+Pillow # For ImageField in users.models
+requests # Likely used by quiz.utils for Gemini API

@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}AI Interview Prep{% endblock %}</title>
+    <title>{% block title %}Universally{% endblock %}</title>
     {# Tailwind CSS via CDN #}
     <script src="https://cdn.tailwindcss.com"></script>
     {# Preline UI Script via CDN #}
     <script src="https://cdn.jsdelivr.net/npm/preline@2.1.0/dist/preline.min.js"></script>
+    {# Chart.js via CDN #}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Optional: Add custom base styles or overrides here */
         body {
-            @apply bg-gray-100 dark:bg-slate-900 text-gray-900 dark:text-gray-100;
+            /* VS Code Dark Theme inspired background */
+            @apply bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200;
         }
-        /* Style for Django messages */
+        /* Style for Django messages (Keep existing, they are reasonable) */
         .message-list {
             position: fixed;
             top: 1rem;
@@ -38,33 +41,37 @@
         .message-content { flex-grow: 1; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen dark"> {# Ensure dark class is always applied if default #}
 
-    {# Basic Navigation Placeholder #}
-    <nav class="bg-white dark:bg-gray-800 shadow-md">
+    {# Navigation Bar - VS Code Style #}
+    <nav class="bg-gray-100 dark:bg-[#333333] shadow-md"> {# Slightly lighter dark bg for nav #}
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="{% url 'landing_page' %}" class="text-xl font-bold text-blue-600 dark:text-blue-400">AI Prep</a>
+                        {# VS Code blue for the brand link #}
+                        <a href="{% url 'landing_page' %}" class="text-xl font-bold text-blue-600 dark:text-[#569cd6]">Universally</a>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                        {# Use namespaced URL for dashboard if it's defined within an app, otherwise keep as is #}
-                        {# Assuming dashboard is still global for now #}
-                        <a href="{% url 'dashboard' %}" class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Dashboard</a>
-                        {# Add other nav links here #}
+                        {# Adjust nav link colors for dark theme #}
+                        <a href="{% url 'dashboard' %}" class="border-transparent text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 hover:text-gray-800 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Dashboard</a>
+                        {# Add other nav links here, styled similarly #}
                     </div>
                 </div>
                 <div class="hidden sm:ml-6 sm:flex sm:items-center">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'users:profile' %}" class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium">Profile</a>
-                        <form method="post" action="{% url 'users:logout' %}" class="inline"> {# Correct namespace used #}
+                         {# Adjust nav link colors for dark theme #}
+                        <a href="{% url 'users:profile' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">Profile</a>
+                        <form method="post" action="{% url 'users:logout' %}" class="inline">
                             {% csrf_token %}
-                            <button type="submit" class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium">Logout</button>
+                             {# Adjust button text color for dark theme #}
+                            <button type="submit" class="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</button>
                         </form>
                     {% else %}
-                        <a href="{% url 'users:login' %}" class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium">Login</a> {# Correct namespace used #}
-                        <a href="{% url 'users:signup' %}" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"> {# Correct namespace used #}
+                         {# Adjust nav link colors for dark theme #}
+                        <a href="{% url 'users:login' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
+                        {# VS Code style blue button #}
+                        <a href="{% url 'users:signup' %}" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0e639c] hover:bg-[#1177bb] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0e639c] dark:focus:ring-offset-gray-800">
                             Sign up
                         </a>
                     {% endif %}
@@ -98,16 +105,18 @@
     </div>
     {% endif %}
 
-    <main class="flex-grow container mx-auto px-4 py-8">
+    {# Main content area - Ensure base dark background is applied #}
+    <main class="flex-grow px-4 py-8 bg-gray-50 dark:bg-[#1e1e1e]"> {# Removed container and mx-auto #}
         {% block content %}
-        {# Default content if block is not overridden #}
-        <p>Welcome to the AI Interview Prep platform.</p>
+        {# Default content if block is not overridden - Style with dark bg and light text #}
+        <p class="dark:text-gray-200">Welcome to the Universally platform.</p> {# Added dark text color to default #}
         {% endblock %}
     </main>
 
-    <footer class="bg-white dark:bg-gray-800 mt-auto">
-        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-gray-500 dark:text-gray-400 text-sm">
-            &copy; {% now "Y" %} AI Interview Prep. All rights reserved.
+    {# Footer - VS Code Style #}
+    <footer class="bg-gray-100 dark:bg-[#333333] mt-auto"> {# Match nav background #}
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-gray-600 dark:text-gray-400 text-sm">
+            &copy; {% now "Y" %} Universally. All rights reserved.
         </div>
     </footer>
 
@@ -123,5 +132,6 @@
             }
         }, 5000); // Remove messages after 5 seconds
     </script>
+    {% block extra_js %}{% endblock %} {# Add block for page-specific JS #}
 </body>
 </html>

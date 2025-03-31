@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect # Import redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from users.utils import record_activity # Import the utility function
+# from users.utils import record_activity # Removed import as function was removed
 import logging
 
 logger = logging.getLogger(__name__)
@@ -42,20 +42,16 @@ def submit_answer(request, question_id): # Added question_id parameter
 
         logger.info(f"Simulating answer submission for question {question_id} by user: {request.user.username}")
 
-        # --- Record Activity and Update Streak ---
-        try:
-            log_entry, created, updated_streak = record_activity(request.user)
-            logger.info(f"Activity recorded for user {request.user.username}. New streak: {updated_streak}. Entry created: {created}")
+        # --- Activity Recording Removed ---
+        # The record_activity function and ActivityLog model were removed.
+        # If activity tracking is needed, it must be reimplemented.
 
-            # Return a success response (e.g., JSON)
-            return JsonResponse({
-                'status': 'success',
-                'message': f'Answer submitted for question {question_id} and activity recorded.',
-                'streak': updated_streak
-            })
-        except Exception as e:
-             logger.error(f"Error recording activity for user {request.user.username}: {e}", exc_info=True)
-             return JsonResponse({'status': 'error', 'message': 'Could not record activity.'}, status=500)
+        # Return a success response (e.g., JSON) - Removed streak info
+        return JsonResponse({
+            'status': 'success',
+            'message': f'Answer submitted for question {question_id}.'
+            # 'streak': updated_streak # Removed streak
+        })
 
     # If GET request or other methods, maybe render a form or return an error
     # For this placeholder, we'll just return an error for non-POST requests

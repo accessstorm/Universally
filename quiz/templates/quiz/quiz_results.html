@@ -5,26 +5,27 @@
 {% block title %}Quiz Results - AI Interview Prep{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-lg shadow-md mt-10">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Quiz Results</h1>
+<div class="max-w-4xl mx-auto bg-white dark:bg-[#252526] p-8 rounded-lg shadow-md mt-10"> {# VS Code panel background #}
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">Quiz Results</h1>
 
     <div class="text-center mb-8">
         <p class="text-lg text-gray-700 dark:text-gray-300">You scored:</p>
-        <p class="text-4xl font-bold text-blue-600 dark:text-blue-400">{{ score }} / {{ total_questions }}</p>
+        <p class="text-4xl font-bold text-blue-600 dark:text-[#569cd6]">{{ score }} / {{ total_questions }}</p> {# VS Code blue for score #}
         {# Add percentage or other metrics if desired #}
     </div>
 
-    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Review Your Answers:</h2>
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Review Your Answers:</h2>
 
     <div class="space-y-6">
         {% for result in results %}
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 {% if result.is_correct %}bg-green-50 dark:bg-green-900/20{% else %}bg-red-50 dark:bg-red-900/20{% endif %}">
-            <p class="font-medium text-gray-800 dark:text-gray-200 mb-2">Q{{ forloop.counter }}: {{ result.question }}</p>
+         {# Adjusted background colors for better dark contrast #}
+        <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4 {% if result.is_correct %}bg-green-50 dark:bg-green-800/30{% else %}bg-red-50 dark:bg-red-800/30{% endif %}">
+            <p class="font-medium text-gray-800 dark:text-gray-100 mb-2">Q{{ forloop.counter }}: {{ result.question }}</p>
 
             {% if result.options %}
             <div class="mb-2 space-y-1">
                 <p class="text-sm font-semibold text-gray-600 dark:text-gray-400">Options:</p>
-                <ul class="list-disc list-inside text-sm text-gray-600 dark:text-gray-400">
+                <ul class="list-disc list-inside text-sm text-gray-600 dark:text-gray-300"> {# Lighter list item text #}
                 {% for option in result.options %}
                     <li>{{ option }}</li>
                 {% endfor %}
@@ -32,7 +33,7 @@
             </div>
             {% endif %}
 
-            <p class="text-sm text-gray-700 dark:text-gray-300">
+            <p class="text-sm text-gray-700 dark:text-gray-200"> {# Lighter text #}
                 <span class="font-semibold">Your Answer:</span>
                 {% if result.user_answer %}
                     {% if result.user_answer|is_list %} {# Use the template filter #}
@@ -44,7 +45,7 @@
                     <span class="italic text-gray-500 dark:text-gray-400">Not Answered</span>
                 {% endif %}
             </p>
-            <p class="text-sm text-gray-700 dark:text-gray-300">
+            <p class="text-sm text-gray-700 dark:text-gray-200"> {# Lighter text #}
                 <span class="font-semibold">Correct Answer:</span>
                  {% if result.correct_answer|is_list %} {# Use the template filter #}
                     {{ result.correct_answer|join:", " }}
@@ -54,7 +55,7 @@
             </p>
 
             {% if result.is_correct %}
-                <p class="text-sm font-bold text-green-600 dark:text-green-400 mt-1">Correct!</p>
+                <p class="text-sm font-bold text-green-600 dark:text-green-400 mt-1">Correct!</p> {# Keep green/red indicators #}
             {% else %}
                  <p class="text-sm font-bold text-red-600 dark:text-red-400 mt-1">Incorrect</p>
                  {# TODO: Add AI feedback here later #}
@@ -64,10 +65,12 @@
     </div>
 
     <div class="mt-8 text-center">
-        <a href="{% url 'quiz:configure_quiz' %}" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+         {# VS Code style primary button #}
+        <a href="{% url 'quiz:configure_quiz' %}" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0e639c] hover:bg-[#1177bb] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0e639c] dark:focus:ring-offset-gray-800">
             Take Another Quiz
         </a>
-        <a href="{% url 'dashboard' %}" class="ml-4 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+         {# VS Code style secondary button #}
+        <a href="{% url 'dashboard' %}" class="ml-4 py-2 px-4 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-[#3c3c3c] hover:bg-gray-50 dark:hover:bg-[#4a4a4a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0e639c] dark:focus:ring-offset-gray-800">
             Back to Dashboard
         </a>
     </div>

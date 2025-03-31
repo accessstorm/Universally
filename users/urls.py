@@ -1,8 +1,9 @@
 from django.urls import path
 # Import necessary views
 from .views import (
-    UserActivityHeatmapData,
+    # UserActivityHeatmapData, # Removed as the view was removed
     user_profile,
+    profile_edit_view, # Add import for the edit view
     user_achievements,
     signup_view,
     login_view,
@@ -12,9 +13,9 @@ from .views import (
 app_name = 'users'
 
 urlpatterns = [
-    # 5️⃣ Streak Tracking & Heatmap (Profile & Heatmap API)
+    # Profile URLs
     path('profile/', user_profile, name='profile'),
-    path('api/activity-heatmap/', UserActivityHeatmapData.as_view(), name='activity_heatmap_data'),
+    path('profile/edit/', profile_edit_view, name='profile_edit'), # Add URL for editing profile
 
     # 7️⃣ Gamification (Achievements - placed here for now)
     path('profile/achievements/', user_achievements, name='user_achievements'), # Added achievements URL

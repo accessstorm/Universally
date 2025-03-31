@@ -3,62 +3,46 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import IntegrityError # Import IntegrityError
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework.views import APIView # Keep if other API views exist/planned
+from rest_framework.response import Response # Keep if other API views exist/planned
 from django.http import HttpResponse # Keep this import for placeholder views
-from rest_framework.permissions import IsAuthenticated
-from .models import ActivityLog, User
-from .forms import CustomUserCreationForm, CustomAuthenticationForm # Import the new forms
+from rest_framework.permissions import IsAuthenticated # Keep if other API views exist/planned
+# No longer need json or mark_safe here
+from .models import User
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, ProfileUpdateForm # Import the new forms
+from quiz.models import QuizAttempt # Import the QuizAttempt model
 from datetime import date, timedelta
 import calendar
 
-class UserActivityHeatmapData(APIView):
-    """
-    Provides activity data for the logged-in user for a heatmap display.
-    Returns data for the last N months (e.g., 6 months).
-    """
-    permission_classes = [IsAuthenticated]
+# Removed UserActivityHeatmapData API view as it depended on ActivityLog and streak
 
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        months_to_show = 6 # Number of past months to include data for
-
-        # Calculate the date range
-        today = date.today()
-        start_date = (today.replace(day=1) - timedelta(days=1)).replace(day=1) # Go to start of previous month
-        for _ in range(months_to_show - 1):
-             start_date = (start_date - timedelta(days=1)).replace(day=1)
-
-        # Fetch activity logs within the date range
-        activity_logs = ActivityLog.objects.filter(
-            user=user,
-            activity_date__gte=start_date,
-            activity_date__lte=today
-        ).values_list('activity_date', flat=True)
-
-        # Convert dates to strings for JSON serialization
-        activity_dates_str = [d.strftime('%Y-%m-%d') for d in activity_logs]
-
-        # Prepare data structure suitable for a heatmap (e.g., simple list of dates)
-        # More complex structures could be used depending on the specific heatmap library
-        heatmap_data = {
-            "startDate": start_date.strftime('%Y-%m-%d'),
-            "endDate": today.strftime('%Y-%m-%d'),
-            "activityDates": activity_dates_str,
-            "currentStreak": user.streak # Include current streak
-        }
-
-        return Response(heatmap_data)
 
 @login_required
 def user_profile(request):
     """
     Displays the user's profile page with streak and heatmap.
     """
-    # The request.user object is available in the template context by default
-    # when using DjangoTemplates backend and RequestContext processor.
-    # No need to explicitly pass it unless you need to add more context.
-    return render(request, 'users/profile.html')
+    # Fetch quiz attempts for the logged-in user
+    quiz_attempts = QuizAttempt.objects.filter(user=request.user).order_by('timestamp') # Order chronologically
+
+    # Prepare data for Chart.js
+    chart_labels = [attempt.timestamp.strftime('%Y-%m-%d %H:%M') for attempt in quiz_attempts]
+    chart_attempted_data = [attempt.questions_attempted for attempt in quiz_attempts]
+    chart_correct_data = [attempt.questions_correct for attempt in quiz_attempts]
+
+    chart_data = {
+        'labels': chart_labels,
+        'attempted': chart_attempted_data,
+        'correct': chart_correct_data,
+    }
+    # Pass the dictionary directly
+
+    context = {
+        'quiz_attempts': quiz_attempts, # Keep original queryset if needed elsewhere
+        'chart_data': chart_data, # Pass the data dictionary directly
+        'user': request.user
+    }
+    return render(request, 'users/profile.html', context)
 
 
 def signup_view(request):
@@ -143,3 +127,28 @@ def user_achievements(request):
     # Render a template (e.g., 'users/achievements.html')
     # return render(request, 'users/achievements.html', context)
     return HttpResponse("User achievements page placeholder.") # Simple response for now
+
+
+@login_required
+def profile_edit_view(request):
+    """
+    Handles displaying and processing the profile update form.
+    """
+    if request.method == 'POST':
+        # Pass request.FILES to handle the profile image upload
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('users:profile') # Redirect back to the profile view page using namespace
+        else:
+            # Add form validation errors to messages
+            for field, errors in form.errors.items():
+                for error in errors:
+                    field_name = form.fields[field].label if form.fields[field].label else field.capitalize()
+                    messages.error(request, f"{field_name}: {error}")
+            # No redirect here, fall through to re-render the form with errors
+    else:
+        form = ProfileUpdateForm(instance=request.user)
+
+    return render(request, 'users/profile_edit.html', {'form': form})

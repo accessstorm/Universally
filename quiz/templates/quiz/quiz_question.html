@@ -4,19 +4,19 @@
 {% block title %}Quiz Question {{ question_index|add:1 }} - AI Interview Prep{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-lg shadow-md mt-10">
+<div class="max-w-4xl mx-auto bg-white dark:bg-[#252526] p-8 rounded-lg shadow-md mt-10"> {# VS Code panel background #}
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-xl font-semibold text-gray-900 dark:text-white">
+        <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100"> {# Darker heading text #}
             Question {{ question_index|add:1 }} of {{ total_questions }}
         </h1>
-        <div id="timer" class="text-lg font-medium text-red-600 dark:text-red-400">
+        <div id="timer" class="text-lg font-medium text-red-600 dark:text-red-400"> {# Keep red for timer, good contrast #}
             Time Left: <span id="time">--:--</span>
         </div>
     </div>
 
     <div class="prose dark:prose-invert max-w-none mb-8">
-        {# Display the question text #}
-        <p class="text-lg font-medium">{{ question.question }}</p>
+        {# Display the question text - Added explicit dark text color #}
+        <p class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ question.question }}</p>
     </div>
 
     <form method="POST" action="{% url 'quiz:quiz_question' question_index=question_index %}" class="space-y-6">
@@ -28,9 +28,10 @@
                 <legend class="sr-only">Options</legend>
                 {% for option in question.options %}
                 <div class="flex items-center">
+                     {# VS Code style radio #}
                     <input id="option_{{ forloop.counter }}" name="answer" type="radio" value="{{ option }}" required
-                           class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 dark:bg-slate-700 dark:border-gray-600">
-                    <label for="option_{{ forloop.counter }}" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                           class="focus:ring-[#0e639c] h-4 w-4 text-[#0e639c] border-gray-300 dark:border-gray-500 dark:bg-[#3c3c3c] dark:focus:ring-offset-gray-800">
+                    <label for="option_{{ forloop.counter }}" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-200"> {# Darker label text #}
                         {{ option }}
                     </label>
                 </div>
@@ -38,25 +39,27 @@
             </fieldset>
         {% elif question.type == 'MSQ' %}
              <fieldset class="space-y-4">
-                <legend class="text-sm font-medium text-gray-900 dark:text-white mb-2">Select all that apply:</legend>
+                <legend class="text-sm font-medium text-gray-900 dark:text-gray-200 mb-2">Select all that apply:</legend> {# Darker legend text #}
                 {% for option in question.options %}
                 <div class="relative flex items-start">
                     <div class="flex items-center h-5">
+                         {# VS Code style checkbox #}
                          <input id="option_{{ forloop.counter }}" name="answer" type="checkbox" value="{{ option }}"
-                                class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded dark:bg-slate-700 dark:border-gray-600">
+                                class="focus:ring-[#0e639c] h-4 w-4 text-[#0e639c] border-gray-300 rounded dark:border-gray-500 dark:bg-[#3c3c3c] dark:focus:ring-offset-gray-800">
                     </div>
                     <div class="ml-3 text-sm">
-                        <label for="option_{{ forloop.counter }}" class="font-medium text-gray-700 dark:text-gray-300">{{ option }}</label>
+                        <label for="option_{{ forloop.counter }}" class="font-medium text-gray-700 dark:text-gray-200">{{ option }}</label> {# Darker label text #}
                     </div>
                 </div>
                 {% endfor %}
             </fieldset>
         {% elif question.type == 'OPEN' %}
             <div>
-                <label for="answer_text" class="block text-sm font-medium text-gray-700 dark:text-white">Your Answer</label>
+                <label for="answer_text" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Your Answer</label> {# Darker label text #}
                 <div class="mt-1">
+                     {# VS Code style textarea #}
                     <textarea id="answer_text" name="answer" rows="6" required
-                              class="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md dark:bg-slate-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"></textarea>
+                              class="shadow-sm focus:ring-[#0e639c] focus:border-[#0e639c] mt-1 block w-full sm:text-sm border border-gray-300 rounded-md dark:border-gray-500 dark:bg-[#3c3c3c] dark:text-gray-100 dark:placeholder-gray-400"></textarea>
                 </div>
             </div>
         {% else %}
@@ -65,7 +68,8 @@
 
         <div class="pt-5">
             <div class="flex justify-end">
-                <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                 {# VS Code style button #}
+                <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0e639c] hover:bg-[#1177bb] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0e639c] dark:focus:ring-offset-gray-800">
                     {% if is_last_question %}
                         Finish Quiz
                     {% else %}

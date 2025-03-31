@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'users', # Add the new users app
-    'jobs',  # Add the new jobs app
-    'quiz',  # Add the new quiz app
+    # Register apps using AppConfig paths
+    'users.apps.UsersConfig',
+    'jobs.apps.JobsConfig',
+    'quiz.apps.QuizConfig',
+    'predictor.apps.PredictorConfig', # Add the new predictor app
 ]
 
 MIDDLEWARE = [
@@ -140,3 +142,7 @@ GOOGLE_AI_API_KEY = 'AIzaSyBdRHaL1YIw4aXxP0lys-_bsCgQYWc5t-0' # Ensured correct 
 AUTH_USER_MODEL = 'users.User'
 
 # Removed duplicate Gemini API Key entry
+
+# Media files (User Uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media' # Store media files in a 'media' directory at the project root

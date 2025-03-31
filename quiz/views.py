@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import QuizConfigForm
 from .utils import generate_quiz_questions # Import the generation function
+from .models import QuizAttempt # Import the QuizAttempt model
 
 @login_required
 def configure_quiz_view(request):
@@ -184,4 +185,23 @@ def quiz_results_view(request):
         'results': results_details,
         'config': quiz_config,
     }
+
+    # --- Save the Quiz Attempt ---
+    total_questions = len(quiz_questions)
+    # Ensure we only save if there were questions
+    if total_questions > 0:
+        QuizAttempt.objects.create(
+            user=request.user,
+            questions_attempted=total_questions,
+            questions_correct=score # 'score' variable holds the count of correct answers
+        )
+    # --- End Save Attempt ---
+
+    # Clear quiz data from session after displaying results and saving attempt
+    request.session.pop('quiz_config', None)
+    request.session.pop('quiz_questions', None)
+    request.session.pop('quiz_answers', None)
+    request.session.pop('current_question_index', None)
+
+
     return render(request, 'quiz/quiz_results.html', context)

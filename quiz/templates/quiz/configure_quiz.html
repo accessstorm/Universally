@@ -4,8 +4,8 @@
 {% block title %}Configure Your Quiz - AI Interview Prep{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-lg shadow-md mt-10">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Configure Your Practice Quiz</h1>
+<div class="max-w-2xl mx-auto bg-white dark:bg-[#252526] p-8 rounded-lg shadow-md mt-10"> {# VS Code panel background #}
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">Configure Your Practice Quiz</h1>
 
     {% if messages %}
         {% for message in messages %}
@@ -33,13 +33,13 @@
 
         {% for field in form %}
         <div>
-            <label for="{{ field.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-white">{{ field.label }}</label>
-            {{ field }} {# Renders the widget with Tailwind classes defined in forms.py #}
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium mb-2 dark:text-gray-200">{{ field.label }}</label> {# Darker label text #}
+            {{ field }} {# Renders the widget - Assuming dark styles are handled in forms.py or need separate adjustment #}
             {% if field.help_text %}
-                <p class="text-xs text-gray-500 mt-2">{{ field.help_text }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">{{ field.help_text }}</p> {# Darker help text #}
             {% endif %}
             {% if field.errors %}
-                <div class="text-xs text-red-600 mt-2">
+                <div class="text-xs text-red-600 dark:text-red-400 mt-2"> {# Darker error text #}
                     {% for error in field.errors %}
                         <p>{{ error }}</p>
                     {% endfor %}
@@ -49,7 +49,8 @@
         {% endfor %}
 
         <div>
-            <button type="submit" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+             {# VS Code style button #}
+            <button type="submit" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-[#0e639c] text-white hover:bg-[#1177bb] disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0e639c] dark:focus:ring-offset-gray-800">
                 Generate Quiz
             </button>
         </div>

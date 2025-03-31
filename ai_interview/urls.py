@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings # Import settings
+from django.conf.urls.static import static # Import static
 # Removed auth_views and signup_view imports as they are handled in users.urls
 from .views import landing_page, dashboard
 
@@ -42,6 +44,9 @@ urlpatterns = [
     # NEW: Quiz Generation & Interface
     path('quiz/', include('quiz.urls')),
 
+    # NEW: CSV Predictor
+    path('predictor/', include('predictor.urls')),
+
     # 6️⃣ Mock AI Interview Mode
 
     # 6️⃣ Mock AI Interview Mode
@@ -52,3 +57,7 @@ urlpatterns = [
 
     # Note: /profile/ and /profile/achievements/ are now under /accounts/profile/ etc.
 ]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
