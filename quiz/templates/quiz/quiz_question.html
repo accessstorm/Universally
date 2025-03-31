@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Quiz Question {{ question_index|add:1 }} - AI Interview Prep{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-lg shadow-md mt-10">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-xl font-semibold text-gray-900 dark:text-white">
+            Question {{ question_index|add:1 }} of {{ total_questions }}
+        </h1>
+        <div id="timer" class="text-lg font-medium text-red-600 dark:text-red-400">
+            Time Left: <span id="time">--:--</span>
+        </div>
+    </div>
+
+    <div class="prose dark:prose-invert max-w-none mb-8">
+        {# Display the question text #}
+        <p class="text-lg font-medium">{{ question.question }}</p>
+    </div>
+
+    <form method="POST" action="{% url 'quiz:quiz_question' question_index=question_index %}" class="space-y-6">
+        {% csrf_token %}
+
+        {# Render input based on question type #}
+        {% if question.type == 'MCQ' %}
+            <fieldset class="space-y-4">
+                <legend class="sr-only">Options</legend>
+                {% for option in question.options %}
+                <div class="flex items-center">
+                    <input id="option_{{ forloop.counter }}" name="answer" type="radio" value="{{ option }}" required
+                           class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 dark:bg-slate-700 dark:border-gray-600">
+                    <label for="option_{{ forloop.counter }}" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {{ option }}
+                    </label>
+                </div>
+                {% endfor %}
+            </fieldset>
+        {% elif question.type == 'MSQ' %}
+             <fieldset class="space-y-4">
+                <legend class="text-sm font-medium text-gray-900 dark:text-white mb-2">Select all that apply:</legend>
+                {% for option in question.options %}
+                <div class="relative flex items-start">
+                    <div class="flex items-center h-5">
+                         <input id="option_{{ forloop.counter }}" name="answer" type="checkbox" value="{{ option }}"
+                                class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded dark:bg-slate-700 dark:border-gray-600">
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="option_{{ forloop.counter }}" class="font-medium text-gray-700 dark:text-gray-300">{{ option }}</label>
+                    </div>
+                </div>
+                {% endfor %}
+            </fieldset>
+        {% elif question.type == 'OPEN' %}
+            <div>
+                <label for="answer_text" class="block text-sm font-medium text-gray-700 dark:text-white">Your Answer</label>
+                <div class="mt-1">
+                    <textarea id="answer_text" name="answer" rows="6" required
+                              class="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md dark:bg-slate-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"></textarea>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-red-500">Error: Unknown question type.</p>
+        {% endif %}
+
+        <div class="pt-5">
+            <div class="flex justify-end">
+                <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    {% if is_last_question %}
+                        Finish Quiz
+                    {% else %}
+                        Next Question
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{# Pass time limit safely using json_script #}
+{{ time_limit_seconds|json_script:"time-limit-data" }}
+
+{# Basic Timer Script #}
+<script>
+    const timeLimitDataElement = document.getElementById('time-limit-data');
+    const timeLimitSeconds = JSON.parse(timeLimitDataElement.textContent);
+    const timerDisplay = document.getElementById('time');
+    let timeLeft = timeLimitSeconds;
+
+    function updateTimer() {
+        const minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        seconds = seconds < 10 ? '0' + seconds : seconds; // Add leading zero
+
+        timerDisplay.textContent = `${minutes}:${seconds}`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timerDisplay.textContent = 'Time Up!';
+            // Optionally auto-submit the form or redirect
+            // document.querySelector('form').submit();
+        } else {
+            timeLeft--;
+        }
+    }
+
+    const timerInterval = setInterval(updateTimer, 1000);
+    updateTimer(); // Initial call to display time immediately
+</script>
+{% endblock %}

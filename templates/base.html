@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" class="dark"> {# Default to dark mode, can be toggled #}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Interview Prep{% endblock %}</title>
+    {# Tailwind CSS via CDN #}
+    <script src="https://cdn.tailwindcss.com"></script>
+    {# Preline UI Script via CDN #}
+    <script src="https://cdn.jsdelivr.net/npm/preline@2.1.0/dist/preline.min.js"></script>
+    <style>
+        /* Optional: Add custom base styles or overrides here */
+        body {
+            @apply bg-gray-100 dark:bg-slate-900 text-gray-900 dark:text-gray-100;
+        }
+        /* Style for Django messages */
+        .message-list {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            width: 300px;
+        }
+        .message {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.375rem; /* rounded-md */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* shadow-md */
+            display: flex;
+            align-items: start;
+        }
+        .message.debug { background-color: #f3f4f6; color: #1f2937; border-left: 4px solid #6b7280; } /* gray */
+        .message.info { background-color: #eff6ff; color: #1e40af; border-left: 4px solid #3b82f6; } /* blue */
+        .message.success { background-color: #ecfdf5; color: #065f46; border-left: 4px solid #10b981; } /* green */
+        .message.warning { background-color: #fffbeb; color: #92400e; border-left: 4px solid #f59e0b; } /* yellow */
+        .message.error { background-color: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; } /* red */
+        .message-icon { margin-right: 0.75rem; flex-shrink: 0; }
+        .message-content { flex-grow: 1; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    {# Basic Navigation Placeholder #}
+    <nav class="bg-white dark:bg-gray-800 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="{% url 'landing_page' %}" class="text-xl font-bold text-blue-600 dark:text-blue-400">AI Prep</a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        {# Use namespaced URL for dashboard if it's defined within an app, otherwise keep as is #}
+                        {# Assuming dashboard is still global for now #}
+                        <a href="{% url 'dashboard' %}" class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Dashboard</a>
+                        {# Add other nav links here #}
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'users:profile' %}" class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium">Profile</a>
+                        <form method="post" action="{% url 'users:logout' %}" class="inline"> {# Correct namespace used #}
+                            {% csrf_token %}
+                            <button type="submit" class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium">Logout</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 px-3 py-2 rounded-md text-sm font-medium">Login</a> {# Correct namespace used #}
+                        <a href="{% url 'users:signup' %}" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"> {# Correct namespace used #}
+                            Sign up
+                        </a>
+                    {% endif %}
+                </div>
+                {# Mobile menu button - Add later if needed #}
+            </div>
+        </div>
+    </nav>
+
+    {# Django Messages Display #}
+    {% if messages %}
+    <div class="message-list">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}" role="alert">
+             <div class="message-icon">
+                {# Basic icons based on tags #}
+                {% if 'success' in message.tags %}
+                <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                {% elif 'error' in message.tags %}
+                <svg class="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>
+                {% else %} {# Default info/warning icon #}
+                <svg class="h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                {% endif %}
+            </div>
+            <div class="message-content">
+                {{ message }}
+            </div>
+            {# Optional: Add a close button for messages #}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        {% block content %}
+        {# Default content if block is not overridden #}
+        <p>Welcome to the AI Interview Prep platform.</p>
+        {% endblock %}
+    </main>
+
+    <footer class="bg-white dark:bg-gray-800 mt-auto">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+            &copy; {% now "Y" %} AI Interview Prep. All rights reserved.
+        </div>
+    </footer>
+
+    {# Preline UI needs to be initialized after the DOM is loaded #}
+    <script>
+        // Simple script to remove messages after a delay
+        setTimeout(() => {
+            const messageList = document.querySelector('.message-list');
+            if (messageList) {
+                messageList.style.transition = 'opacity 0.5s ease-out';
+                messageList.style.opacity = '0';
+                setTimeout(() => messageList.remove(), 500);
+            }
+        }, 5000); // Remove messages after 5 seconds
+    </script>
+</body>
+</html>

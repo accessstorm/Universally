@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Log In - AI Interview Prep{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 p-10 bg-white dark:bg-slate-800 rounded-xl shadow-lg z-10">
+        <div class="text-center">
+            <h2 class="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
+                Sign in to your account
+            </h2>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                Or <a href="{% url 'users:signup' %}" class="font-medium text-blue-600 hover:text-blue-500">
+                    create a new account
+                </a>
+            </p>
+        </div>
+
+        <!-- Messages Display Block -->
+        {% if messages %}
+            {% for message in messages %}
+            <div class="rounded-md {% if message.tags == 'error' %}bg-red-50 dark:bg-red-900{% elif message.tags == 'success' %}bg-green-50 dark:bg-green-900{% else %}bg-blue-50 dark:bg-blue-900{% endif %} p-4 mb-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        {% if message.tags == 'error' %}
+                        <!-- Heroicon name: solid/x-circle -->
+                        <svg class="h-5 w-5 text-red-400 dark:text-red-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                        {% elif message.tags == 'success' %}
+                         <!-- Heroicon name: solid/check-circle -->
+                         <svg class="h-5 w-5 text-green-400 dark:text-green-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                         </svg>
+                        {% else %} <!-- Default to info icon -->
+                        <!-- Heroicon name: solid/information-circle -->
+                         <svg class="h-5 w-5 text-blue-400 dark:text-blue-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                        {% endif %}
+                    </div>
+                    <div class="ml-3">
+                         <p class="text-sm font-medium {% if message.tags == 'error' %}text-red-800 dark:text-red-300{% elif message.tags == 'success' %}text-green-800 dark:text-green-300{% else %}text-blue-800 dark:text-blue-300{% endif %}">
+                            {{ message }}
+                         </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        <!-- End Messages Display Block -->
+
+        <form class="mt-8 space-y-6" method="POST" action="{% url 'users:login' %}">
+            {% csrf_token %}
+             {# Include the 'next' parameter if it exists in the request #}
+             {% if request.GET.next %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+             {% endif %}
+
+            <div class="rounded-md shadow-sm -space-y-px">
+                {% for field in form %}
+                 {% if field.name != 'username' and field.name != 'password' %} {# Only show username and password explicitly #}
+                    {{ field.as_hidden }}
+                 {% else %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="sr-only">{{ field.label }}</label>
+                        <input id="{{ field.id_for_label }}" name="{{ field.name }}" type="{{ field.field.widget.input_type }}" autocomplete="{{ field.name }}" required
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-slate-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm {% if field.name == 'username' %}rounded-t-md{% else %}rounded-b-md{% endif %} {% if field.errors %}border-red-500{% endif %}"
+                               placeholder="{{ field.label }}">
+                        {% if field.errors %}
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ field.errors|striptags }}</p>
+                        {% endif %}
+                         {% if field.name == 'username' %}
+                            <div class="h-px bg-gray-200 dark:bg-gray-700"></div> {# Separator line #}
+                         {% endif %}
+                    </div>
+                 {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    {# Add remember me checkbox if needed later #}
+                </div>
+
+                <div class="text-sm">
+                    <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+                        Forgot your password?
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Sign in
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
