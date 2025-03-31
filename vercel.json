@@ -1,14 +1,18 @@
-
 {
-    "builds": [{
-        "src": "ai_interview/wsgi.py",
-        "use": "@vercel/python",
-        "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    }],
-    "routes": [
+    "version": 2,
+    "builds": [
         {
-            "src": "/(.*)",
-            "dest": "ai_interview/wsgi.py"
+            "src": "ai_interview/manage.py",
+            "use": "@vercel/static-build",
+            "config": { "zeroConfig": true }
         }
-    ]
+    ],
+    "routes": [
+        { "src": "/static/(.*)", "dest": "/static/$1" },
+        { "src": "/(.*)", "dest": "gunicorn ai_interview.wsgi:application" }
+    ],
+    "env": {
+        "DJANGO_SETTINGS_MODULE": "ai_interview.settings",
+        "PYTHONUNBUFFERED": "1"
+    }
 }

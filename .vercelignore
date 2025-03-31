@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+migrations/
+static/
+media/
+node_modules/
+*.sqlite3
