@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: ai-interview-backend # You can change this name
+    env: python
+    plan: free # Or your desired Render plan
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate
+    startCommand: gunicorn ai_interview.wsgi:application
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-interview-db # Name of the Render PostgreSQL database you'll create
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true # Render will generate a secure secret key
+      - key: GOOGLE_AI_API_KEY
+        sync: false # Set this manually in Render's environment variables dashboard
+      - key: WEB_CONCURRENCY
+        value: 4 # Adjust based on your Render plan's resources
+      - key: PYTHONVERSION # Specify Python version if needed
+        value: 3.10 # Match the version used in development if possible
+      # Add other environment variables needed by your settings.py here
+      # e.g., ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS if you need more than the defaults
+      # - key: ALLOWED_HOSTS
+      #   value: yourdomain.com,.onrender.com
+      # - key: CSRF_TRUSTED_ORIGINS
+      #   value: https://yourdomain.com,https://*.onrender.com
+
+databases:
+  - name: ai-interview-db # Must match the name used in envVars above
+    databaseName: ai_interview_prod # Optional: specify database name
+    user: ai_interview_user # Optional: specify database user
+    plan: free # Or your desired Render PostgreSQL plan
+    # region: frankfurt # Optional: specify region, e.g., 'frankfurt' or 'oregon'

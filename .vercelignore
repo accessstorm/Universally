@@ -1,7 +1,42 @@
+# Ignore Python virtual environment
+.venv/
 venv/
+
+# Ignore Python cache and compiled files
 __pycache__/
-migrations/
-static/
-media/
-node_modules/
+*.pyc
+*.pyo
+
+# Ignore database files
 *.sqlite3
+*.sqlite3-journal
+
+# Ignore Django project/app directories (assuming backend runs on Render)
+manage.py
+ai_interview/
+jobs/
+quiz/
+predictor/
+users/
+migrations/ # Ignore all migration folders
+
+# Ignore collected static files (handled by Render/Whitenoise)
+staticfiles/
+
+# Ignore user-uploaded media files
+media/
+
+# Ignore Node.js dependencies (if any)
+node_modules/
+
+# Ignore Render configuration
+render.yaml
+
+# Ignore Git files and environment files
+.git/
+.gitignore
+.env*
+
+# Ignore documentation and license (optional)
+README.md
+LICENSE

@@ -133,6 +133,9 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# Django static files collection directory
+/staticfiles/
+
 # VS Code settings
 .vscode/
 !.vscode/settings.json

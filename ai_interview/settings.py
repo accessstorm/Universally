@@ -10,25 +10,52 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os # Add os import
+import dj_database_url # Add dj_database_url import
+from dotenv import load_dotenv # Add dotenv import
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file (optional, useful for local dev)
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a_zg!(m6!9+u@b)c!bbpn8@s#a=cj-0mj)s2bonz&t!3+tm)($'
+# Get SECRET_KEY from environment variable
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Get DEBUG from environment variable (default to False for production)
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'localhost', 'RBfake.pythonanywhere.com']
+# Get ALLOWED_HOSTS from environment variable, split by comma
+allowed_hosts_str = os.environ.get('ALLOWED_HOSTS', '')
+ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_str.split(',') if host.strip()]
 
+# Add Render and Vercel hostnames for production, plus defaults for local dev
+# Render provides a '.onrender.com' domain by default
+# Vercel provides '.vercel.app'
+ALLOWED_HOSTS.extend([
+    '127.0.0.1',
+    'localhost',
+    '.onrender.com', # Add Render default domain pattern
+    '.vercel.app', # Keep Vercel domain pattern
+])
 
-import os # Add os import for potential future environment variable use
+# Add CSRF trusted origins from environment variable
+csrf_trusted_origins_str = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_trusted_origins_str.split(',') if origin.strip()]
+
+# Add Render and Vercel origins
+CSRF_TRUSTED_ORIGINS.extend([
+    'https://*.onrender.com',
+    'https://*.vercel.app',
+])
+
 
 # Application definition
 
@@ -38,6 +65,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'corsheaders', # Add corsheaders
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'rest_framework',
     # Register apps using AppConfig paths
@@ -49,8 +78,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # Add CORS middleware (high up, but after SecurityMiddleware)
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    'django.middleware.common.CommonMiddleware', # Ensure CommonMiddleware is after CorsMiddleware if using CORS_ALLOW_ALL_ORIGINS=True (not recommended for prod)
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -59,7 +90,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ai_interview.urls'
 
-import os # Add import os
+# Removed duplicate os import
 
 TEMPLATES = [
     {
@@ -83,12 +114,18 @@ WSGI_APPLICATION = 'ai_interview.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Configure database using DATABASE_URL environment variable
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        # Fallback to SQLite for local development if DATABASE_URL not set
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600 # Optional: connection pooling
+    )
 }
+
+# Raise error if SECRET_KEY is not set in production
+if not DEBUG and not SECRET_KEY:
+    raise ValueError("SECRET_KEY environment variable must be set in production")
 
 
 # Password validation
@@ -126,6 +163,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+# Place static files collected by collectstatic into this directory
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Enable Whitenoise storage for optimized static file handling
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -135,8 +178,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # --- Custom Settings ---
 
 # Google AI API Key
-# TODO: Load from environment variable in production for security
-GOOGLE_AI_API_KEY = 'AIzaSyBdRHaL1YIw4aXxP0lys-_bsCgQYWc5t-0' # Ensured correct key is used
+# Load from environment variable
+GOOGLE_AI_API_KEY = os.environ.get('GOOGLE_AI_API_KEY')
+
+# Raise error if GOOGLE_AI_API_KEY is not set in production
+if not DEBUG and not GOOGLE_AI_API_KEY:
+    raise ValueError("GOOGLE_AI_API_KEY environment variable must be set in production")
+
 
 # Tell Django to use the custom User model
 AUTH_USER_MODEL = 'users.User'
@@ -146,3 +194,32 @@ AUTH_USER_MODEL = 'users.User'
 # Media files (User Uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media' # Store media files in a 'media' directory at the project root
+
+
+# CORS Settings
+# Get allowed origins from environment variable, split by comma
+cors_allowed_origins_str = os.environ.get('CORS_ALLOWED_ORIGINS', '')
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_allowed_origins_str.split(',') if origin.strip()]
+
+# Fallback for local development if not set via environment variable
+if not CORS_ALLOWED_ORIGINS and DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        'http://localhost:3000', # Example React default port
+        'http://127.0.0.1:3000',
+        'http://localhost:5173', # Example Vue/Vite default port
+        'http://127.0.0.1:5173',
+    ]
+
+# Alternatively, use regex (more flexible but potentially less secure if not careful)
+# CORS_ALLOWED_ORIGIN_REGEXES = [
+#     r"^https://\w+\.vercel\.app$",
+# ]
+
+# Allow credentials (cookies, authorization headers) if needed
+# CORS_ALLOW_CREDENTIALS = True
+
+# Allow specific headers if needed (defaults are usually sufficient)
+# CORS_ALLOW_HEADERS = list(default_headers) + ['my-custom-header']
+
+# Allow specific methods (defaults are usually sufficient)
+# CORS_ALLOW_METHODS = list(default_methods) + ['PATCH']
