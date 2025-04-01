@@ -19,7 +19,7 @@ services:
       - key: GOOGLE_AI_API_KEY
         sync: false # Set this manually in Render's environment variables dashboard
       - key: WEB_CONCURRENCY
-        value: 4 # Adjust based on your Render plan's resources
+        value: 2 # Reduced workers to potentially fit free tier memory
       - key: PYTHONVERSION # Specify Python version if needed
         value: 3.10 # Match the version used in development if possible
       # Add other environment variables needed by your settings.py here
