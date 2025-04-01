@@ -25,8 +25,9 @@ load_dotenv(BASE_DIR / '.env')
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Get SECRET_KEY from environment variable
-SECRET_KEY = os.environ.get('SECRET_KEY')
+# Using a HARDCODED dummy key for testing/college project as requested.
+# DO NOT use this key in a real production environment!
+SECRET_KEY = 'dummy-secret-key-for-testing-ai-interview-project' # Dummy Key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Get DEBUG from environment variable (default to False for production)
@@ -123,9 +124,7 @@ DATABASES = {
     )
 }
 
-# Raise error if SECRET_KEY is not set in production
-if not DEBUG and not SECRET_KEY:
-    raise ValueError("SECRET_KEY environment variable must be set in production")
+# Removed check for SECRET_KEY environment variable
 
 
 # Password validation
