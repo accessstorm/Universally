@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'corsheaders', # Add corsheaders
+    # Removed 'corsheaders'
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'rest_framework',
@@ -79,9 +79,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # Add CORS middleware (high up, but after SecurityMiddleware)
+    # Removed 'corsheaders.middleware.CorsMiddleware'
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware', # Ensure CommonMiddleware is after CorsMiddleware if using CORS_ALLOW_ALL_ORIGINS=True (not recommended for prod)
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -196,30 +196,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media' # Store media files in a 'media' directory at the project root
 
 
-# CORS Settings
-# Get allowed origins from environment variable, split by comma
-cors_allowed_origins_str = os.environ.get('CORS_ALLOWED_ORIGINS', '')
-CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_allowed_origins_str.split(',') if origin.strip()]
-
-# Fallback for local development if not set via environment variable
-if not CORS_ALLOWED_ORIGINS and DEBUG:
-    CORS_ALLOWED_ORIGINS = [
-        'http://localhost:3000', # Example React default port
-        'http://127.0.0.1:3000',
-        'http://localhost:5173', # Example Vue/Vite default port
-        'http://127.0.0.1:5173',
-    ]
-
-# Alternatively, use regex (more flexible but potentially less secure if not careful)
-# CORS_ALLOWED_ORIGIN_REGEXES = [
-#     r"^https://\w+\.vercel\.app$",
-# ]
-
-# Allow credentials (cookies, authorization headers) if needed
-# CORS_ALLOW_CREDENTIALS = True
-
-# Allow specific headers if needed (defaults are usually sufficient)
-# CORS_ALLOW_HEADERS = list(default_headers) + ['my-custom-header']
-
-# Allow specific methods (defaults are usually sufficient)
-# CORS_ALLOW_METHODS = list(default_methods) + ['PATCH']
+# Removed CORS Settings section

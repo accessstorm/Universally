@@ -1,25 +1,24 @@
-# Universally - AI Interview Platform Backend
+# Universally - AI Interview Platform
 
-**Universally** is the backend API for an AI-powered platform designed to streamline test question generation and machine learning model selection. This Django application serves as the API endpoint for a separate frontend application.
+**Universally** is an AI-powered web platform designed to streamline test question generation and machine learning model selection. This Django application provides the full web interface and backend logic.
 
-## Features (Provided via API)
+## Features
 
 ### 1. **AI-Powered Test Question Generator**
-- Uses a **Gemini-powered bot** (via API key) to generate test questions across multiple genres.
+- Uses a **Gemini-powered bot** (via API key) to generate test questions across multiple genres directly within the web application.
 - Enables efficient and diverse test creation for educational and assessment purposes.
 
 ### 2. **Smart ML Model Selector**
-- Provides endpoints to select the most suitable **machine learning model** for CSV file training.
+- Allows users to upload CSV files and automatically selects the most suitable **machine learning model** for training via the web interface.
 - Utilizes **scikit-learn, pandas, and numpy** to analyze data and determine the best-fitting model.
-- Simplifies the ML model selection process via API calls.
+- Simplifies the ML model selection process for users without deep ML expertise.
 
-## Technology Stack (Backend)
+## Technology Stack
 - **Python**
 - **Django** & **Django Rest Framework** (Web framework and API toolkit)
 - **Gunicorn** (Production WSGI server)
 - **Whitenoise** (Static file serving in production)
 - **dj-database-url** & **psycopg2-binary** (PostgreSQL database connection in production)
-- **django-cors-headers** (Handling Cross-Origin Resource Sharing)
 - **python-dotenv** (Managing environment variables locally)
 - **Scikit-learn, Pandas, NumPy** (for ML model selection logic)
 - **Google Generative AI SDK** (for test question generation)
@@ -56,8 +55,6 @@
         DEBUG=True
         DATABASE_URL='sqlite:///db.sqlite3' # Use SQLite locally
         GOOGLE_AI_API_KEY='your-google-ai-api-key'
-        # Optional: Add local frontend URL for CORS during development
-        CORS_ALLOWED_ORIGINS='http://localhost:3000,http://127.0.0.1:3000' # Example for React dev server
         ```
     *   **Important:** Do NOT commit the `.env` file to Git (it's included in `.gitignore`).
 
@@ -75,16 +72,13 @@
     ```bash
     python manage.py runserver
     ```
-    The API backend will be available at `http://127.0.0.1:8000/`.
+    The web application will be available at `http://127.0.0.1:8000/`.
 
 ## Deployment
 
-This project is configured for a split deployment:
+This project is configured for deployment to **Render** using the `render.yaml` configuration file. Render will host the entire Django application, including backend logic, template rendering, and static file serving (via Whitenoise).
 
-*   **Backend API:** Deployed to **Render** using the `render.yaml` configuration file. This handles Python execution, database connections, and API request processing.
-*   **Frontend Application:** A separate frontend application (e.g., React, Vue) should be built to interact with this API. This frontend application is intended to be deployed to **Vercel**.
-
-Refer to the Render deployment steps outlined previously for deploying the backend. Configure your frontend application to make requests to the deployed Render backend URL.
+Refer to the Render deployment steps outlined previously for deploying the application. Ensure you set the necessary environment variables (`GOOGLE_AI_API_KEY`) in the Render dashboard.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.

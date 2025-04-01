@@ -47,7 +47,7 @@ urllib3==2.3.0
 # Production dependencies
 gunicorn
 whitenoise
-django-cors-headers # For allowing frontend requests
+# Removed django-cors-headers
 dj_database_url
 psycopg2-binary
 python-dotenv
