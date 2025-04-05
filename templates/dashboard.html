@@ -5,144 +5,497 @@
 
 {% block content %}
 <style>
-    /* Removed heatmap styles */
-    /* Ensure Preline sidebar styles work well */
-    /* The lg:ps-64 class on the main content div pushes content past the sidebar */
+    .stat-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .gradient-button {
+        background: linear-gradient(135deg, #0e639c 0%, #1a85d8 100%);
+        transition: all 0.3s ease;
+    }
+    .gradient-button:hover {
+        background: linear-gradient(135deg, #0d5789 0%, #1070bd 100%);
+        transform: translateY(-1px);
+    }
+    .progress-ring {
+        transition: stroke-dashoffset 0.35s;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+    }
 </style>
 
-<!-- Preline Sidebar Layout -->
-<!-- Navigation Header -->
-<header class="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white border-b text-sm py-2.5 sm:py-4 lg:ps-64 dark:bg-[#333333] dark:border-neutral-700">
-    <nav class="flex basis-full items-center w-full mx-auto px-4 sm:px-6" aria-label="Global">
+<!-- Navigation Header with improved styling -->
+<header class="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white border-b text-sm py-3 sm:py-0 lg:ps-72 dark:bg-[#1e1e1e] dark:border-neutral-700 shadow-sm">
+    <nav class="flex basis-full items-center w-full mx-auto px-4 sm:px-6 lg:px-8" aria-label="Global">
         <div class="me-5 lg:me-0 lg:hidden">
             <!-- Mobile Logo -->
-            <a class="flex-none rounded-xl text-xl inline-block font-semibold focus:outline-none focus:opacity-80 dark:text-[#569cd6]" href="{% url 'landing_page' %}" aria-label="AI Prep">
+            <a class="flex-none text-xl font-bold text-[#0e639c] dark:text-[#569cd6]" href="{% url 'landing_page' %}" aria-label="AI Prep">
                 AI Prep
             </a>
         </div>
 
         <div class="w-full flex items-center justify-end ms-auto sm:justify-between sm:gap-x-3 sm:order-3">
-            {# Reverting toggle button to original state (hidden on sm+) #}
             <div class="sm:hidden">
-                <button type="button" class="hs-collapse-toggle p-2.5 inline-flex justify-center items-center gap-x-2 rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700" data-hs-overlay="#application-sidebar" aria-controls="application-sidebar" aria-label="Toggle navigation">
+                <button type="button" class="hs-collapse-toggle p-2.5 inline-flex justify-center items-center gap-x-2 rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700" data-hs-overlay="#application-sidebar" aria-controls="application-sidebar" aria-label="Toggle navigation">
                     <svg class="hs-collapse-open:hidden flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>
                     <svg class="hs-collapse-open:block hidden flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                  </button>
+                </button>
             </div>
 
             <div class="hidden sm:block">
-                <!-- Optional Search Bar Placeholder -->
+                <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Interview Dashboard</h1>
             </div>
 
-            <div class="flex flex-row items-center justify-end gap-2">
-                 <span class="text-gray-600 dark:text-neutral-300 text-sm">Welcome, {{ user.username }}</span>
-                 <!-- Logout is handled by base.html nav now -->
+            <div class="flex flex-row items-center justify-end gap-3">
+                <div class="hs-dropdown relative inline-flex">
+                    <button type="button" class="flex items-center gap-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-neutral-300 dark:hover:text-white">
+                        <div class="relative inline-block">
+                            <svg class="size-5 text-gray-600 dark:text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <span class="bg-[#0e639c] size-2.5 rounded-full absolute end-0 bottom-0 ring-2 ring-white dark:ring-neutral-900"></span>
+                        </div>
+                        <span>{{ user.username }}</span>
+                        <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 </header>
-<!-- End Navigation Header -->
 
-<!-- Sidebar -->
-{# Reverting sidebar to original state (fixed open on lg+) #}
-<div id="application-sidebar" class="hs-overlay [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform w-[260px] hidden fixed inset-y-0 start-0 z-[60] bg-white border-e border-gray-200 lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 dark:bg-[#252526] dark:border-neutral-700">
-    <div class="px-8 pt-4">
-        <!-- Sidebar Logo -->
-        <a class="flex-none rounded-xl text-xl inline-block font-semibold focus:outline-none focus:opacity-80 dark:text-[#569cd6]" href="{% url 'landing_page' %}" aria-label="AI Prep">
-           AI Interview Prep
+<!-- Modernized Sidebar -->
+<div id="application-sidebar" class="hs-overlay [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform w-72 hidden fixed inset-y-0 start-0 z-[60] bg-white border-e border-gray-200 lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 dark:bg-[#1e1e1e] dark:border-neutral-700 shadow-md">
+    <div class="px-6 py-5 flex items-center border-b border-gray-200 dark:border-neutral-700">
+        <a class="flex-none text-xl font-bold text-[#0e639c] dark:text-[#569cd6]" href="{% url 'landing_page' %}">
+            AI Interview Prep
         </a>
     </div>
 
-    <nav class="hs-accordion-group p-6 w-full flex flex-col flex-wrap" data-hs-accordion-always-open>
+    <div class="p-4">
+        <div class="flex items-center gap-x-3 mb-6 mt-2">
+            <div class="relative inline-block">
+                <span class="inline-flex items-center justify-center size-10 rounded-full bg-[#0e639c] text-white text-lg font-bold">
+                    {{ user.username|slice:":1" }}
+                </span>
+                <span class="bg-green-500 size-2.5 rounded-full absolute end-0 bottom-0 ring-2 ring-white dark:ring-neutral-900"></span>
+            </div>
+            <div>
+                <span class="block text-sm font-semibold text-gray-800 dark:text-white">{{ user.username }}</span>
+                <span class="block text-xs text-gray-500 dark:text-neutral-400">Student</span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="p-4 w-full flex flex-col flex-wrap">
         <ul class="space-y-1.5">
             <li>
-                <a class="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600 dark:bg-[#333333] dark:text-white" href="{% url 'dashboard' %}">
-                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <a class="flex items-center gap-x-3 py-3 px-4 text-sm bg-gray-100 font-medium text-neutral-700 rounded-lg focus:outline-none dark:bg-[#2d2d30] dark:text-white" href="{% url 'dashboard' %}">
+                    <svg class="flex-shrink-0 size-5 text-[#0e639c] dark:text-[#569cd6]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                     Dashboard
                 </a>
             </li>
             <li>
-                <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-neutral-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-600 dark:text-neutral-400 dark:hover:bg-[#333333] dark:hover:text-neutral-300" href="{% url 'users:profile' %}">
-                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="15" r="3"/><circle cx="9" cy="7" r="4"/><path d="M10 15H6a4 4 0 0 0-4 4v2"/><path d="m21.7 16.4-.9-.3"/><path d="m15.2 13.9-.9-.3"/><path d="m16.6 18.7.3-.9"/><path d="m19.1 12.2.3-.9"/><path d="m19.6 18.7-.4-1"/><path d="m16.8 12.3-.4-1"/><path d="m14.3 16.6 1-.4"/><path d="m20.7 13.8 1-.4"/></svg>
+                <a class="flex items-center gap-x-3 py-3 px-4 text-sm text-neutral-700 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-neutral-300 dark:hover:bg-[#2d2d30]" href="{% url 'users:profile' %}">
+                    <svg class="flex-shrink-0 size-5 text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/></svg>
                     Profile
                 </a>
             </li>
             <li>
-                <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-neutral-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-600 dark:text-neutral-400 dark:hover:bg-[#333333] dark:hover:text-neutral-300" href="{% url 'quiz:configure_quiz' %}">
-                     <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2h2Z"/></svg>
-                      Practice Quiz
-                 </a>
-             </li>
-             <li> {# Add link to Predictor Tool #}
-                <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-neutral-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-600 dark:text-neutral-400 dark:hover:bg-[#333333] dark:hover:text-neutral-300" href="{% url 'predictor:predictor_tool' %}">
-                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> {# Simple chart icon #}
+                <a class="flex items-center gap-x-3 py-3 px-4 text-sm text-neutral-700 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-neutral-300 dark:hover:bg-[#2d2d30]" href="{% url 'quiz:configure_quiz' %}">
+                    <svg class="flex-shrink-0 size-5 text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><circle cx="10" cy="13" r="2"/><path d="m20 17-1.09-1.09a2 2 0 0 0-2.82 0L10 22"/></svg>
+                    Practice Quiz
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-x-3 py-3 px-4 text-sm text-neutral-700 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-neutral-300 dark:hover:bg-[#2d2d30]" href="{% url 'predictor:predictor_tool' %}">
+                    <svg class="flex-shrink-0 size-5 text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> 
                     CSV Predictor
                 </a>
             </li>
-             <!-- Add other sidebar links here -->
-         </ul>
-     </nav>
+        </ul>
+        
+        <!-- Quick Stats -->
+        <div class="mt-8 p-4 bg-gray-50 rounded-lg dark:bg-[#252526]">
+            <h4 class="text-xs font-medium uppercase text-gray-500 dark:text-neutral-400 mb-3">Your Stats</h4>
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-xs text-gray-600 dark:text-neutral-300">Questions Attempted</span>
+                    <span class="text-xs font-medium text-neutral-700 dark:text-white">24</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-xs text-gray-600 dark:text-neutral-300">Avg. Score</span>
+                    <span class="text-xs font-medium text-neutral-700 dark:text-white">83%</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-xs text-gray-600 dark:text-neutral-300">Strong Areas</span>
+                    <span class="text-xs font-medium text-neutral-700 dark:text-white">2</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Sidebar Footer -->
+    <div class="mt-auto p-4 border-t border-gray-200 dark:border-neutral-700">
+        <a class="flex items-center gap-x-3 py-2 px-3 text-sm text-red-600 rounded-lg hover:bg-gray-100 hover:text-red-700 dark:text-red-500 dark:hover:bg-neutral-800" href="#">
+            <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
+        </a>
+    </div>
 </div>
-<!-- End Sidebar -->
 
 <!-- Content Area -->
-{# Keeping lg:ps-64 as it might be needed for layout calculations #}
-<div class="w-full lg:ps-64">
-    <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
-        <!-- Grid for Cards -->
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-
-            <!-- Card: AI Questions -->
-            <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-[#252526] dark:border-neutral-700">
-                <div class="p-4 md:p-5">
+<div class="w-full lg:ps-72">
+    <div class="p-4 sm:p-6 lg:p-8 space-y-8">
+        <!-- Welcome Banner -->
+        <div class="bg-gradient-to-r from-[#0e639c] to-[#1a85d8] rounded-xl p-6 shadow-lg">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-1">Welcome back, {{ user.username }}!</h2>
+                    <p class="text-blue-100">Continue where you left off or start a new practice session.</p>
+                </div>
+                <a href="{% url 'quiz:configure_quiz' %}" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-blue-200 bg-white/10 text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all">
+                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Continue Practice
+                </a>
+            </div>
+        </div>
+        
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Card 1: Practice Stats -->
+            <div class="stat-card bg-white border rounded-xl shadow-sm overflow-hidden dark:bg-[#252526] dark:border-neutral-700">
+                <div class="p-5">
+                    <div class="flex items-center gap-x-4">
+                        <div class="inline-flex justify-center items-center size-12 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                            <svg class="flex-shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-neutral-400">
+                                Completed Sessions
+                            </h3>
+                            <div class="mt-1 flex items-center gap-x-1">
+                                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+                                    8
+                                </h2>
+                                <span class="flex items-center text-xs text-green-600 dark:text-green-400">
+                                    <svg class="size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                                    12%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 py-3 px-5 dark:bg-[#1e1e1e]">
+                    <div class="flex items-center gap-x-2">
+                        <p class="text-xs text-gray-600 dark:text-neutral-400">
+                            Last session: 2 days ago
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 2: Skill Progress -->
+            <div class="stat-card bg-white border rounded-xl shadow-sm overflow-hidden dark:bg-[#252526] dark:border-neutral-700">
+                <div class="p-5">
+                    <div class="flex items-center gap-x-4">
+                        <div class="inline-flex justify-center items-center size-12 rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                            <svg class="flex-shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-neutral-400">
+                                Skill Level
+                            </h3>
+                            <div class="mt-1 flex items-center gap-x-1">
+                                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+                                    Advanced
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 py-3 px-5 dark:bg-[#1e1e1e]">
+                    <div class="flex items-center gap-x-2">
+                        <div class="bg-gray-200 rounded-full h-1.5 w-full dark:bg-neutral-700">
+                            <div class="bg-green-600 h-1.5 rounded-full" style="width: 72%"></div>
+                        </div>
+                        <span class="text-xs font-medium text-gray-600 dark:text-neutral-400">72%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 3: Upcoming Interview -->
+            <div class="stat-card bg-white border rounded-xl shadow-sm overflow-hidden dark:bg-[#252526] dark:border-neutral-700">
+                <div class="p-5">
+                    <div class="flex items-center gap-x-4">
+                        <div class="inline-flex justify-center items-center size-12 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                            <svg class="flex-shrink-0 size-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-neutral-400">
+                                Upcoming Interview
+                            </h3>
+                            <div class="mt-1">
+                                <h2 class="text-lg font-bold text-gray-800 dark:text-white">
+                                    Google - SWE
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 py-3 px-5 dark:bg-[#1e1e1e]">
+                    <div class="flex items-center gap-x-2">
+                        <svg class="flex-shrink-0 size-4 text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <p class="text-xs text-gray-600 dark:text-neutral-400">
+                            In 5 days (Apr 10, 2025)
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Grid Layout for Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Area: Practice Area -->
+            <div class="lg:col-span-2 bg-white border rounded-xl shadow-sm dark:bg-[#252526] dark:border-neutral-700">
+                <div class="p-5 border-b dark:border-neutral-700">
                     <h3 class="text-lg font-bold text-gray-800 dark:text-white">
-                        Practice Questions
+                        Practice Area
                     </h3>
-                    <p class="mt-1 text-gray-500 dark:text-neutral-400">
-                        Generate AI-powered questions for your target role.
-                    </p>
-                    <div class="mt-4">
-                        <p class="text-sm text-gray-500 dark:text-neutral-400">Configure and start a new practice quiz.</p>
-                        <a href="{% url 'quiz:configure_quiz' %}" class="mt-2 py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-[#0e639c] text-white hover:bg-[#1177bb] disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0e639c] dark:focus:ring-offset-gray-800">
-                            Start New Quiz
+                </div>
+                
+                <div class="p-5">
+                    <!-- Practice Options -->
+                    <div class="grid sm:grid-cols-2 gap-4 mb-6">
+                        <!-- Quick Practice -->
+                        <div class="bg-gray-50 p-4 rounded-lg dark:bg-[#333333]">
+                            <div class="flex items-start gap-3">
+                                <div class="inline-flex justify-center items-center size-10 rounded-lg bg-[#0e639c] text-white">
+                                    <svg class="flex-shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-base font-semibold text-gray-800 dark:text-white mb-1">CSV Predictor</h4>
+                                    <p class="text-sm text-gray-600 dark:text-neutral-400">Prediction of csv files</p>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="/predictor" class="gradient-button w-full py-2 px-3 inline-flex justify-center items-center text-sm font-medium rounded-lg text-white shadow-sm hover:shadow disabled:opacity-50 disabled:pointer-events-none">
+                                    Predict now
+                                </a>
+                            </div>
+                        </div>
+                        
+                        
+
+                        
+
+
+                        <!-- Custom Quiz -->
+                        <div class="bg-gray-50 p-4 rounded-lg dark:bg-[#333333]">
+                            <div class="flex items-start gap-3">
+                                <div class="inline-flex justify-center items-center size-10 rounded-lg bg-[#0e639c] text-white">
+                                    <svg class="flex-shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-base font-semibold text-gray-800 dark:text-white mb-1">Custom Quiz</h4>
+                                    <p class="text-sm text-gray-600 dark:text-neutral-400">Design your own quiz with specific topics</p>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="{% url 'quiz:configure_quiz' %}" class="w-full py-2 px-3 inline-flex justify-center items-center text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 dark:bg-[#252526] dark:border-neutral-700 dark:text-white dark:hover:bg-[#2d2d30]">
+                                    Configure
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Practice Preview Area -->
+                    <div class="border border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center dark:border-neutral-700">
+                        <svg class="size-12 text-gray-400 mb-3 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+                        <h4 class="text-base font-medium text-gray-800 dark:text-white mb-1">Start a Practice Session</h4>
+                        <p class="text-sm text-gray-500 dark:text-neutral-400 mb-4">Choose one of the options above to begin practicing for your next interview</p>
+                        <a href="{% url 'quiz:configure_quiz' %}" class="gradient-button py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg text-white shadow-sm hover:shadow">
+                            <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            Get Started
                         </a>
                     </div>
                 </div>
             </div>
-            <!-- End Card -->
 
-            <!-- Card: User Progress -->
-            <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-[#252526] dark:border-neutral-700">
-                <div class="p-4 md:p-5">
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-white">
-                        Your Progress
+            
+            
+            <!-- Right Column: Performance Summary -->
+            <div class="bg-white border rounded-xl shadow-sm dark:bg-[#252526] dark:border-neutral-700">
+                <div class="p-5 border-b dark:border-neutral-700">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-x-2">
+                        Performance Summary
                     </h3>
-                    <p class="mt-1 text-gray-500 dark:text-neutral-400">
-                        Overview of your performance.
-                    </p>
-                    <div class="mt-4">
-                        <!-- Placeholder for progress charts/stats -->
-                        <p class="text-sm text-gray-500 dark:text-neutral-400">[Progress Visualization Area - Coming Soon]</p>
+                </div>
+                
+                <div class="p-5">
+                    <!-- Overall Score -->
+                    <div class="mb-5">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-sm font-medium text-gray-600 dark:text-neutral-300">Overall Score</h4>
+                            <span class="text-sm font-bold text-gray-800 dark:text-white">83%</span>
+                        </div>
+                        <div class="h-2 w-full bg-gray-200 rounded-full dark:bg-neutral-700">
+                            <div class="h-2 bg-[#0e639c] rounded-full" style="width: 83%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Topic Performance -->
+                    <h4 class="text-sm font-medium text-gray-600 dark:text-neutral-300 mb-3">Topic Performance</h4>
+                    <div class="space-y-3">
+                        <!-- Data Structures -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs text-gray-500 dark:text-neutral-400">Data Structures</span>
+                                <span class="text-xs font-medium text-gray-700 dark:text-neutral-300">92%</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-gray-200 rounded-full dark:bg-neutral-700">
+                                <div class="h-1.5 bg-green-600 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Algorithms -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs text-gray-500 dark:text-neutral-400">Algorithms</span>
+                                <span class="text-xs font-medium text-gray-700 dark:text-neutral-300">78%</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-gray-200 rounded-full dark:bg-neutral-700">
+                                <div class="h-1.5 bg-blue-600 rounded-full" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- System Design -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs text-gray-500 dark:text-neutral-400">System Design</span>
+                                <span class="text-xs font-medium text-gray-700 dark:text-neutral-300">65%</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-gray-200 rounded-full dark:bg-neutral-700">
+                                <div class="h-1.5 bg-yellow-500 rounded-full" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Behavioral -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs text-gray-500 dark:text-neutral-400">Behavioral</span>
+                                <span class="text-xs font-medium text-gray-700 dark:text-neutral-300">88%</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-gray-200 rounded-full dark:bg-neutral-700">
+                                <div class="h-1.5 bg-blue-600 rounded-full" style="width: 88%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommended Topics -->
+                    <div class="mt-6">
+                        <h4 class="text-sm font-medium text-gray-600 dark:text-neutral-300 mb-3">Recommended Focus Areas</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center p-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
+                                <svg class="flex-shrink-0 size-4 text-yellow-500 me-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="m8 23-3-3 3-3"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="m2 2 7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                                <span class="text-xs text-yellow-800 dark:text-yellow-400">System Design</span>
+                            </div>
+                            <div class="flex items-center p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+                                <svg class="flex-shrink-0 size-4 text-blue-500 me-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                <span class="text-xs text-blue-800 dark:text-blue-400">Time Complexity</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Activity Timeline -->
+                    <div class="mt-6">
+                        <h4 class="text-sm font-medium text-gray-600 dark:text-neutral-300 mb-3">Recent Activity</h4>
+                        <ol class="relative border-s border-gray-200 dark:border-neutral-700">                  
+                            <li class="mb-3 ms-4">
+                                <div class="absolute w-3 h-3 bg-[#0e639c] rounded-full mt-1.5 -start-1.5 border border-white dark:border-neutral-900"></div>
+                                <time class="mb-1 text-xs font-normal leading-none text-gray-500 dark:text-neutral-400">3 days ago</time>
+                                <h5 class="text-xs font-medium text-gray-800 dark:text-white">Completed Data Structures Quiz</h5>
+                            </li>
+                            <li class="mb-3 ms-4">
+                                <div class="absolute w-3 h-3 bg-[#0e639c] rounded-full mt-1.5 -start-1.5 border border-white dark:border-neutral-900"></div>
+                                <time class="mb-1 text-xs font-normal leading-none text-gray-500 dark:text-neutral-400">1 week ago</time>
+                                <h5 class="text-xs font-medium text-gray-800 dark:text-white">Updated Career Profile</h5>
+                            </li>
+                            <li class="ms-4">
+                                <div class="absolute w-3 h-3 bg-[#0e639c] rounded-full mt-1.5 -start-1.5 border border-white dark:border-neutral-900"></div>
+                                <time class="mb-1 text-xs font-normal leading-none text-gray-500 dark:text-neutral-400">2 weeks ago</time>
+                                <h5 class="text-xs font-medium text-gray-800 dark:text-white">Started System Design Path</h5>
+                            </li>
+                        </ol>
                     </div>
                 </div>
             </div>
-            <!-- End Card -->
-
         </div>
-        <!-- End Grid -->
-
-        <!-- Main Content Area for Questions/Answers -->
-        <div class="bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-[#252526] dark:border-neutral-700">
-            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-3">
-                Practice Area
-            </h3>
-            <!-- Placeholder for displaying a question and answer input -->
-            <p class="text-gray-500 dark:text-neutral-400">Select 'Start New Quiz' to begin practicing.</p>
+        
+        <!-- Additional Resources -->
+        <div class="bg-white border rounded-xl shadow-sm dark:bg-[#252526] dark:border-neutral-700">
+            <div class="p-5 border-b dark:border-neutral-700">
+                <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+                    Recommended Resources
+                </h3>
+            </div>
+            
+            <div class="p-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Resource Card 1 -->
+                    <div class="bg-gray-50 rounded-lg p-4 dark:bg-[#333333]">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="inline-flex justify-center items-center size-10 rounded-lg bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                                <svg class="flex-shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
+                            </div>
+                            <h4 class="text-base font-semibold text-gray-800 dark:text-white">System Design Guide</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-neutral-400 mb-3">Comprehensive guide to ace system design interviews at FAANG companies.</p>
+                        <a href="#" class="text-sm text-[#0e639c] hover:text-[#1a85d8] font-medium dark:text-[#569cd6]">View Guide →</a>
+                    </div>
+                    
+                    <!-- Resource Card 2 -->
+                    <div class="bg-gray-50 rounded-lg p-4 dark:bg-[#333333]">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="inline-flex justify-center items-center size-10 rounded-lg bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                <svg class="flex-shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            </div>
+                            <h4 class="text-base font-semibold text-gray-800 dark:text-white">Algorithm Flashcards</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-neutral-400 mb-3">Interactive flashcards to help you memorize key algorithm patterns.</p>
+                        <a href="#" class="text-sm text-[#0e639c] hover:text-[#1a85d8] font-medium dark:text-[#569cd6]">Start Learning →</a>
+                    </div>
+                    
+                    <!-- Resource Card 3 -->
+                    <div class="bg-gray-50 rounded-lg p-4 dark:bg-[#333333]">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="inline-flex justify-center items-center size-10 rounded-lg bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                <svg class="flex-shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15V6m0 0H2v15h18M21 6l-7 4.5-7-4.5"/></svg>
+                            </div>
+                            <h4 class="text-base font-semibold text-gray-800 dark:text-white">Weekly Newsletter</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-neutral-400 mb-3">Get the latest interview questions and trends delivered to your inbox.</p>
+                        <a href="#" class="text-sm text-[#0e639c] hover:text-[#1a85d8] font-medium dark:text-[#569cd6]">Subscribe →</a>
+                    </div>
+                </div>
+            </div>
         </div>
-
     </div>
+    
+    <!-- Footer -->
+    <footer class="mt-auto py-4 px-6 bg-white border-t dark:bg-[#1e1e1e] dark:border-neutral-700">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-y-2">
+            <div>
+                <p class="text-xs text-gray-500 dark:text-neutral-400">© 2025 AI Interview Prep. All rights reserved.</p>
+            </div>
+            <div class="flex items-center gap-x-3">
+                <a class="inline-flex text-xs text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-white" href="#">Terms</a>
+                <a class="inline-flex text-xs text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-white" href="#">Privacy</a>
+                <a class="inline-flex text-xs text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-white" href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
 </div>
-<!-- End Content Area -->
 
-<!-- Removed JavaScript for Heatmap -->
 {% endblock %}
